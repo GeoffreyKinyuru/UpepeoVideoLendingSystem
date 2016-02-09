@@ -1,0 +1,320 @@
+
+package myupepeoproject;
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.*;
+import javax.swing.JOptionPane;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.Connection;
+
+public class MembersRegistration extends JFrame{
+    private static JTextField fName, lName,address, location, occupation,email;
+    private static JPasswordField pasKey,cPass;
+  
+    private static JLabel messagel,fl,ll,al,lol,occupationl,el,pl,cpl,ef,ela,ea,elo,eo,ee,ep,ecp;
+    private static JButton register,reset, cancel;
+    private static  String firstname,lastname,addressVar,ocupation,emailV,password,locatiov,confirmPass;
+ 
+    
+    //start of my CONSTRUCTOR
+    public MembersRegistration(){
+        //Fundamentals first-setting upt the window
+        super("Members Registration form");
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setSize(500,450);
+         setVisible(true);//End of Fundamentals-settin up the window
+         //Adding TextFields
+         //Declarative message
+         messagel=new JLabel("PLEASE PROVIDE US WITH THE FOLLOWING INFORMATION");
+        messagel.setBounds(1, 10, 400, 30);
+        messagel.setForeground(Color.BLUE);
+         add(messagel);//End of message
+         
+         //Image ICon
+         
+         
+         
+         //Firstname components
+         ef=new JLabel("* FirstName can't be Blank:");
+         ef.setForeground(Color.RED);
+         ef.setBounds(290,40, 200, 20);
+         add(ef);
+         
+         fl=new JLabel("FirstName:");
+         fl.setBounds(1,40, 100, 20);
+         add(fl);
+         
+         fName=new JTextField();
+         fName.setBounds(70, 40, 200, 20);
+         add(fName);//End of FirstName components
+         //LastName components
+         ela=new JLabel("* lastName can't be Blank:");
+         ela.setForeground(Color.RED);
+         ela.setBounds(290,80, 200, 20);
+         add(ela); 
+         
+         ll=new JLabel("LastName:");
+         ll.setBounds(1,80, 100, 20);
+         add(ll);
+         
+         lName=new JTextField();
+         lName.setBounds(70, 80, 200, 20);
+         add(lName);//End of lastname components
+         //Address Components
+         ea=new JLabel("* The Address can't be Blank:");
+         ea.setForeground(Color.RED);
+         ea.setBounds(290,110, 200, 20);
+         add(ea); 
+         
+         al=new JLabel("Address:");
+         al.setBounds(1,110, 100, 20);
+         add(al);
+         
+         address=new JTextField();
+         address.setBounds(70, 110, 200, 20);
+         add(address);//End of address components
+         //Location components
+         elo=new JLabel("* Location can't be Blank:");
+         elo.setForeground(Color.RED);
+        elo.setBounds(290,150, 200, 20);
+         add(elo); 
+         
+         lol=new JLabel("Location:");
+         lol.setBounds(1,150, 100, 20);
+         add(lol);
+         
+         location=new JTextField();
+         location.setBounds(70, 150, 200, 20);
+         add(location);//End of location components
+         //Occupation components
+         eo=new JLabel("* Occupation can't be Blank:");
+         eo.setForeground(Color.RED);
+        eo.setBounds(290,190, 200, 20);
+         add(eo); 
+         
+        occupationl=new JLabel("Occupation:");
+         occupationl.setBounds(1,190, 100, 20);
+         add(occupationl);
+         
+         occupation=new JTextField();
+         occupation.setBounds(70, 190, 200, 20);
+         add(occupation);//End of occupation attribute
+         //email attribute
+           ee=new JLabel("* Email can't be Blank:");
+         ee.setForeground(Color.RED);
+        ee.setBounds(290,220, 200, 20);
+         add(ee); 
+         
+          el=new JLabel("Email:");
+         el.setBounds(1,220, 100, 20);
+         add(el);
+         
+         email=new JTextField();
+         email.setBounds(70, 220, 200, 20);
+         add(email);//End of email attribute
+         //password attribute;
+         ep=new JLabel("* Password can't be Blank:");
+         ep.setForeground(Color.RED);
+        ep.setBounds(290,250, 200, 20);
+         add(ep);  
+         
+         pl=new JLabel("Password:");
+         pl.setBounds(1,250, 100, 20);
+         add(pl);
+         
+         pasKey=new JPasswordField();
+         pasKey.setBounds(70, 250, 200, 20);
+         add(pasKey);//End of the password atrribute
+         //Confirm password attribute
+         ecp=new JLabel("* Password can't be Blank:");
+         ecp.setForeground(Color.RED);
+        ecp.setBounds(290,310, 200, 20);
+         add(ecp); 
+         
+         cpl=new JLabel("Confirm Password:");
+         cpl.setBounds(1,290, 120, 20);
+         add(cpl);
+         
+         cPass=new JPasswordField();
+         cPass.setBounds(70, 310, 200, 20);
+         add(cPass);//End of confirm passoword attribute
+         //Start of Buttons addition
+         register=new JButton("REGISTER");
+         register.setBounds(70, 350, 100, 40);
+         register.setForeground(Color.BLUE);
+         register.setBackground(Color.ORANGE);
+         add(register);//End of register
+         //start of Reset Button
+         reset=new JButton("RESET");
+         reset.setBounds(180, 350, 100, 40);
+         reset.setForeground(Color.BLUE);
+         reset.setBackground(Color.ORANGE);
+         add(reset);//End of reset
+         //start of cancel button
+         cancel=new JButton("CANCEL");
+         cancel.setBounds(290, 350, 100, 40);
+         cancel.setForeground(Color.BLUE);
+         cancel.setBackground(Color.ORANGE);
+         add(cancel);//End of cancel button
+         
+         //START OF DIFFRENT EVENTS
+         //1: WindowActivated Event
+          addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+             public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+        //2:Register Button Event
+        registerEvent e=new registerEvent();
+        register.addActionListener(e);
+        //Reset Button Event
+        resetEvent re=new resetEvent();
+        reset.addActionListener(re);
+        //Cancel Button Event
+        cancelEvent ce=new cancelEvent();
+        cancel.addActionListener(ce);
+    }
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {                                     
+        ef.setVisible(false);
+        ela.setVisible(false);
+        ea.setVisible(false);
+        elo.setVisible(false);
+        eo.setVisible(false);
+        ep.setVisible(false);
+         ee.setVisible(false);
+          ecp.setVisible(false);
+    }
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {                                   
+       
+      int i=JOptionPane.showConfirmDialog(this,"Are you sure that you want to close","CONFIRM",JOptionPane.YES_NO_CANCEL_OPTION);
+      if(i==JOptionPane.YES_OPTION){
+          System.exit(0);
+      }
+      else{
+          return;
+      }
+    } 
+    //Register Button Event
+    public class registerEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+           try{
+              
+           
+            firstname=fName.getText();
+            if( firstname.isEmpty()){
+                ef.setVisible(true);
+            }else{
+                ef.setVisible(false);
+            }
+            lastname=lName.getText();
+            if(lastname.isEmpty()){
+                ela.setVisible(true);
+            }else{
+                ela.setVisible(false);
+            }
+            addressVar=address.getText();
+                        if( addressVar.isEmpty()){
+                ea.setVisible(true);
+            }else{
+                ea.setVisible(false);
+            }
+            
+            locatiov=location.getText();
+            if(locatiov.isEmpty()){
+                elo.setVisible(true);
+            }else{
+                elo.setVisible(false);
+            }
+            
+            ocupation=occupation.getText();
+            if(ocupation.isEmpty()){
+                eo.setVisible(true);
+            }else{
+                eo.setVisible(false);
+            }
+           
+            emailV=email.getText();
+            if(emailV.isEmpty()){
+                ee.setVisible(true);
+            }else{
+                ee.setVisible(false);
+            }
+           
+            password=pasKey.getText();
+            if(password.isEmpty()){
+                ep.setVisible(true);
+            }else{
+                ep.setVisible(false);
+            }
+           
+            confirmPass=cPass.getText();
+            if(confirmPass.isEmpty()){
+                ecp.setVisible(true);
+            }else{
+                ecp.setVisible(false);
+            }
+           }catch(Exception e){
+               e.getMessage();
+           }               
+            
+            try{
+                
+                Connection sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MembersDatabase", "root", "");
+            //create a connection to the database
+            Statement sqlStatements = sqlConnection.createStatement();
+           
+            String INSERT_QUERY = "INSERT INTO MembersRegistrationTable VALUES('" + firstname + "','" + lastname + "','" + addressVar + "','"+locatiov+"','"+ocupation+"','"+emailV+"','"+password+"');";
+            sqlStatements.execute(INSERT_QUERY);
+            
+           JOptionPane.showMessageDialog(null,firstname+" : "+"Your records were saved successfully","SUCCESSFUL REGISTRATION",JOptionPane.INFORMATION_MESSAGE);
+
+            }catch(SQLException e){
+                System.out.println(" SERVER SAYS:"+e.getMessage());
+            }
+        }
+    }
+    public class resetEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+            fName.setText(null);
+            lName.setText(null);
+            address.setText(null);
+            location.setText(null);
+            occupation.setText(null);
+            email.setText(null);
+            pasKey.setText(null);
+            cPass.setText(null);
+        }
+    }
+    public class cancelEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+            int i=JOptionPane.showConfirmDialog(null, "Are you sure that you want to exit ?","CONFIRM",JOptionPane.YES_NO_CANCEL_OPTION );
+            if (i==JOptionPane.YES_OPTION){
+                System.exit(0);
+            }else{
+            }
+        }
+    }
+    public static void main(String [] args){
+       javax.swing.SwingUtilities.invokeLater(
+       
+       new Runnable(){
+           @Override
+           public void run(){
+               new MembersRegistration();
+           }
+       }
+       );
+    }
+    
+}
