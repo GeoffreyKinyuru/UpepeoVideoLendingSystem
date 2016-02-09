@@ -1,0 +1,206 @@
+
+package myupepeoproject;
+import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.util.Date;
+
+import java.awt.event.*;
+import static java.awt.image.ImageObserver.ABORT;
+import javax.swing.JOptionPane;
+
+public class VideoCatalogue extends JFrame {
+    private static JMenuBar mainMenu;
+    private static JMenu file,help;
+    private static JMenuItem open,exit;
+    private static JTextField vid, vL,date;
+    private static JComboBox vCat,vAvail;
+    private static JButton add,newV,cancel;
+    private JLabel l1,vidl,vcl,vl,va,ed;
+    private static Date entryDate;
+    //Start of my Constructor
+    public VideoCatalogue(){
+        //Fundamentals first
+        super("VIDEO CATALOGUE");
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(450,400);
+        setVisible(true);
+        //Styling the frame
+        //MenuBar
+        mainMenu=new JMenuBar();
+        mainMenu.setBackground(Color.BLACK);
+        
+        add(mainMenu);
+        
+       file=new JMenu("File");
+       file.setForeground(Color.ORANGE);
+        mainMenu.add(file);
+        
+        open=new JMenuItem("OPEN");
+        open.setForeground(Color.BLUE);
+        file.add(open);
+        exit=new JMenuItem("EXIT");
+        exit.setForeground(Color.BLUE);
+        file.add(exit);
+        
+        help=new JMenu("help");
+        help.setForeground(Color.ORANGE);
+        mainMenu.add(help);        
+        setJMenuBar(mainMenu);//End of MenuBar()
+        
+        //Message
+        l1=new JLabel("UPEPEO VIDEO ENTRY SECTION");
+        l1.setBounds(100, 5, 250,30 );
+        l1.setForeground(Color.BLUE);
+        add(l1);//End of Message
+        
+        //start of my MY TEXTFIELDS
+                //VideoIdLabel(vidl)
+        vidl=new JLabel("Video ID:");
+        vidl.setBounds(40, 40,70,20);
+        add(vidl);//end of vidl
+                    //VideoId (vid)
+        vid=new JTextField();
+       vid.setBounds(100,40,200,20); 
+       add(vid);// End of my Video id section
+       
+       //videCategoryLabel
+       vcl=new JLabel("Video Category:");
+       vcl.setBounds(1, 70, 90,20);
+       add(vcl);
+       
+       vCat=new JComboBox();
+       vCat.setBounds(100,70,200,20);
+       vCat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Category","Horror", "Catoon", "Thriller","General" }));
+       add(vCat);
+        //end of vCat
+        
+        //VIdeoLabel
+        vl=new JLabel("Video Label:");
+        vl.setBounds(20, 100,80, 20);
+        add(vl);
+        //videoLabel;
+        vL=new JTextField();
+        vL.setBounds(100, 100, 200, 20);
+        add(vL);//end of VideoLabel
+        //videAvailLabel
+        va=new JLabel("Availability:");
+        va.setBounds(20, 130, 80, 20);
+        add(va);
+        //videoAvailability
+        vAvail=new JComboBox();
+        vAvail.setBounds(100, 130, 200, 20);
+        vAvail.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Availability","Available", "Missing" }));
+        add(vAvail);//end of VideoAvailability
+        
+        //Entry date ed
+        ed=new JLabel("Entry Date:");
+        ed.setBounds(20, 160, 80, 20);
+        add(ed);//end of Entry Date
+        
+        //Date TextField
+        date=new JTextField();
+        date.setBounds(100, 160, 200, 20);
+        add(date);//End of date TextField
+        
+        //Addition of Buttons.
+        
+        //Add Button
+        add=new JButton("ADD");
+        add.setBounds(50, 200, 70, 50);
+        add.setBackground(Color.BLACK);
+        add.setForeground(Color.BLUE);
+        add(add);//end of add button
+        
+        //New Video Button
+        newV=new JButton("NEXT");
+         newV.setBounds(180, 200, 70, 50);
+        newV.setBackground(Color.BLACK);
+        newV.setForeground(Color.BLUE);
+        add(newV);//end of new button
+        
+        //Cancel Button
+        cancel=new JButton("CANCEL");
+          cancel.setBounds(300, 200, 80, 50);
+         cancel.setBackground(Color.BLACK);
+         cancel.setForeground(Color.BLUE);
+        add( cancel);//End of  cancel button
+        
+   // BUTTONS EVENTS 
+   
+    //add Button
+aEvent ae=new aEvent();
+add.addActionListener(ae);
+
+//Cancel Button
+
+cEvent ce=new cEvent();
+cancel.addActionListener(ce);
+
+// Next button
+nEvent ne=new nEvent();
+newV.addActionListener(ne);
+    }
+    public class aEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        String id, label, dat,vc,va,ve;
+        id=vid.getText();
+        label=vL.getText();
+        dat=date.getText();
+        vc=(String) vCat.getSelectedItem();
+        va=(String)vAvail.getSelectedItem();
+       
+       try{ 
+           if( id.isEmpty()||label.isEmpty()|| dat.isEmpty()||vc.isEmpty()||va.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Error! Empty set", "Error Message", JOptionPane.ERROR_MESSAGE);
+        }
+       }catch(Exception e){
+           e.getMessage();
+       }
+    }
+}
+  
+    public class cEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+            
+            int c=JOptionPane.showConfirmDialog(null, "Are you sure you want to cancel ?","Confirm Message",JOptionPane.YES_NO_CANCEL_OPTION);
+            try{
+                if (c==JOptionPane.YES_OPTION){
+                System.exit(0);
+            }else{
+                return;
+            }
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+    }
+    public class nEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+            vid.setText(null);
+              vAvail.setSelectedIndex(0);
+                vCat.setSelectedIndex(0);
+                  vL.setText(null);
+                    date.setText(null);
+        }
+    }
+    public static void main(String [] args){
+        javax.swing.SwingUtilities.invokeLater(
+        
+        new Runnable(){
+            @Override
+            public void run(){
+                new VideoCatalogue();
+            }
+        }
+        
+        );
+    }
+}
