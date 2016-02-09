@@ -1,0 +1,278 @@
+
+package myupepeoproject;
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+public class AdminLogin extends JFrame{
+    
+    private static JLabel stmt,pic,user, pass;
+    private static ImageIcon img;
+    private static JTextField name;
+    private static JPasswordField pf;
+    private static JButton log,can;
+    private static String adminPass;
+    private static String adminUsername;
+    private static String enteredPassword;
+    private static String enteredName;
+    
+    public AdminLogin(){
+        // Essentials First
+        
+        super("LOGIN FORM");
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setSize(500,400);
+        setVisible(true);
+        
+        //Adding elements on the window
+        stmt=new JLabel("WE NEED YOUR PROVE THAT YOU ARE THE ADMINISTRATOR");
+        stmt.setForeground(Color.RED);        
+        stmt.setBounds(20, 10,400, 40);
+        add(stmt);
+        
+        img=new ImageIcon(getClass().getResource("Users-Folder-icon.png"));        
+        pic=new JLabel(img);
+        pic.setBounds(2, 60, 200, 200);
+        add(pic);
+        
+        user=new JLabel("UserName:");
+        user.setBounds(210, 60, 70, 20);
+        user.setForeground(Color.BLUE);
+        add(user);
+        
+        name=new JTextField();
+        name.setBounds(290,60,150,20);
+        add(name);
+        
+        pass=new JLabel("Password:");
+        pass.setBounds(210, 150, 70,20);
+        pass.setForeground(Color.BLUE);
+        add(pass);
+        
+        pf=new JPasswordField();
+        pf.setBounds(290, 150, 150, 20);
+        add(pf);
+        
+        log=new JButton("LOGIN");
+        log.setBackground(Color.BLACK);
+        log.setForeground(Color.BLUE);
+        log.setBounds(210,200,90,50);
+        add(log);
+        
+        can=new JButton("CANCEL");
+        can.setBackground(Color.BLACK);
+        can.setForeground(Color.BLUE);
+        can.setBounds(350,200,90,50);
+        add(can);
+        
+        //START OF EVENTS
+        lEvent le=new lEvent();
+        log.addActionListener(le);
+        
+    }
+    public class lEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+            enteredName=name.getText();
+            enteredPassword=pf.getText();
+           
+               if(enteredName.isEmpty()||enteredPassword.isEmpty()){ 
+                   JOptionPane.showMessageDialog(null,"All fields are madatory !","Error Message", JOptionPane.ERROR_MESSAGE);
+               }
+               else{                  
+                 try{  
+            Connection sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/admin", "root", "");
+        
+            //create a connection to the database
+            Statement sqlStatements = sqlConnection.createStatement();
+            
+           String SELECT_QUERY = "SELECT * FROM adminauthenitication;";
+       
+           ResultSet queryResults = sqlStatements.executeQuery(SELECT_QUERY);
+       
+           
+           
+           while(queryResults.next()){   
+               
+               adminUsername=queryResults.getString("userName");
+           adminPass=queryResults.getString("password");
+           
+          if(  enteredName.equals(adminUsername)&&enteredPassword.equals(adminPass)){
+           JOptionPane.showMessageDialog(null,"Querry excecuted succeffully","SUCCESSFUL",JOptionPane.INFORMATION_MESSAGE);
+          }else{
+           JOptionPane.showMessageDialog(null, "UserName or Password is not correct","Error Message",JOptionPane.ERROR_MESSAGE);
+         }
+       
+         }//End of while
+                 }catch(SQLException e){
+                    System.out.println("SERVER SAYS:"+ e.getMessage());
+                 }     
+         
+     }       //End of the first Else  
+           
+        }
+    }//End of loginEvent
+    public static void main(String [] args){
+        javax.swing.SwingUtilities.invokeLater(
+        new Runnable(){
+            
+            @Override
+            public void run(){
+                
+                new AdminLogin();
+            }
+        }
+        
+        
+        );
+    }
+}
+
+package myupepeoproject;
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+public class AdminLogin extends JFrame{
+    
+    private static JLabel stmt,pic,user, pass;
+    private static ImageIcon img;
+    private static JTextField name;
+    private static JPasswordField pf;
+    private static JButton log,can;
+    private static String adminPass;
+    private static String adminUsername;
+    private static String enteredPassword;
+    private static String enteredName;
+    
+    public AdminLogin(){
+        // Essentials First
+        
+        super("LOGIN FORM");
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setSize(500,400);
+        setVisible(true);
+        
+        //Adding elements on the window
+        stmt=new JLabel("WE NEED YOUR PROVE THAT YOU ARE THE ADMINISTRATOR");
+        stmt.setForeground(Color.RED);        
+        stmt.setBounds(20, 10,400, 40);
+        add(stmt);
+        
+        img=new ImageIcon(getClass().getResource("Users-Folder-icon.png"));        
+        pic=new JLabel(img);
+        pic.setBounds(2, 60, 200, 200);
+        add(pic);
+        
+        user=new JLabel("UserName:");
+        user.setBounds(210, 60, 70, 20);
+        user.setForeground(Color.BLUE);
+        add(user);
+        
+        name=new JTextField();
+        name.setBounds(290,60,150,20);
+        add(name);
+        
+        pass=new JLabel("Password:");
+        pass.setBounds(210, 150, 70,20);
+        pass.setForeground(Color.BLUE);
+        add(pass);
+        
+        pf=new JPasswordField();
+        pf.setBounds(290, 150, 150, 20);
+        add(pf);
+        
+        log=new JButton("LOGIN");
+        log.setBackground(Color.BLACK);
+        log.setForeground(Color.BLUE);
+        log.setBounds(210,200,90,50);
+        add(log);
+        
+        can=new JButton("CANCEL");
+        can.setBackground(Color.BLACK);
+        can.setForeground(Color.BLUE);
+        can.setBounds(350,200,90,50);
+        add(can);
+        
+        //START OF EVENTS
+        lEvent le=new lEvent();
+        log.addActionListener(le);
+        
+    }
+    public class lEvent implements ActionListener{
+        public void actionPerformed(ActionEvent ev){
+            enteredName=name.getText();
+            enteredPassword=pf.getText();
+           
+               if(enteredName.isEmpty()||enteredPassword.isEmpty()){ 
+                   JOptionPane.showMessageDialog(null,"All fields are madatory !","Error Message", JOptionPane.ERROR_MESSAGE);
+               }
+               else{                  
+                 try{  
+            Connection sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/admin", "root", "");
+        
+            //create a connection to the database
+            Statement sqlStatements = sqlConnection.createStatement();
+            
+           String SELECT_QUERY = "SELECT * FROM adminauthenitication;";
+       
+           ResultSet queryResults = sqlStatements.executeQuery(SELECT_QUERY);
+       
+           
+           
+           while(queryResults.next()){   
+               
+               adminUsername=queryResults.getString("userName");
+           adminPass=queryResults.getString("password");
+           
+          if(  enteredName.equals(adminUsername)&&enteredPassword.equals(adminPass)){
+           JOptionPane.showMessageDialog(null,"Querry excecuted succeffully","SUCCESSFUL",JOptionPane.INFORMATION_MESSAGE);
+          }else{
+           JOptionPane.showMessageDialog(null, "UserName or Password is not correct","Error Message",JOptionPane.ERROR_MESSAGE);
+         }
+       
+         }//End of while
+                 }catch(SQLException e){
+                    System.out.println("SERVER SAYS:"+ e.getMessage());
+                 }     
+         
+     }       //End of the first Else  
+           
+        }
+    }//End of loginEvent
+    public static void main(String [] args){
+        javax.swing.SwingUtilities.invokeLater(
+        new Runnable(){
+            
+            @Override
+            public void run(){
+                
+                new AdminLogin();
+            }
+        }
+        
+        
+        );
+    }
+}
