@@ -1,0 +1,221 @@
+
+package myupepeoproject;
+import java.awt.Color;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import java.awt.event.*;
+import javax.swing.JOptionPane;
+
+public class MyUpepeoProject extends JFrame{
+    private static String usernam,passk;
+    private static JLabel imageHolder,userLevel,errorLabel;
+    private static JComboBox userOptions;
+    private static ImageIcon image2;
+    private static JPanel imagePanel,levelPanel,buttonsPanel;
+    private static JButton admin,member;
+    
+    //The start of my Constructor
+    
+    public MyUpepeoProject(){
+        
+        //setting the fundamentals
+        super("MY SWITHCBOARD");
+        setLayout(null);
+        setSize(500,500);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setVisible(true);
+        
+        
+        //I first add my first panel 
+        imagePanel=new JPanel();        
+        imagePanel.setBounds(10, 30, 200, 400);        
+        add(imagePanel);
+        
+        //I then insert an image in the panel
+        image2=new ImageIcon(getClass().getResource("upepeo.jpg"));
+        imageHolder=new JLabel(image2);
+        imageHolder.setSize(290, 390);
+        imagePanel.add(imageHolder);
+        
+       //The other panel goes here-levelPanel 
+        levelPanel=new JPanel();
+        levelPanel.setBounds(240, 30, 260, 100);
+        levelPanel.setBackground(Color.GRAY);
+        add(levelPanel);
+        //My first Label and ComboBox added in the levelPanel
+        userLevel=new JLabel("Select Level");
+        userLevel.setForeground(Color.RED);
+        userLevel.setBounds(241, 32, 15, 15);
+        userLevel.setFont(new java.awt.Font("Times New Roman",1,18));
+        levelPanel.add(userLevel);
+        //ComboBox
+        userOptions=new JComboBox();    
+        userOptions.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select", "Admin", "Member" }));
+        userOptions.setBounds(250, 50, 100, 30);
+        levelPanel.add(userOptions);
+        
+        //ADMIN navigation button
+        
+        admin=new JButton("-->ADMIN ");
+        admin.setBounds(240, 170, 100, 65);
+        admin.setForeground(Color.BLUE);
+        admin.setBackground(Color.BLACK);
+        add(admin);
+        
+        //MEMBER navigation Button
+        member=new JButton("-->MEMBER ");
+         member.setBounds(360, 170, 105, 65);
+         member.setForeground(Color.BLUE);
+         member.setBackground(Color.BLACK);
+        add( member);
+        
+        //Error label
+        errorLabel=new JLabel("Can't Proceed, userLevel required ! !");
+        errorLabel.setBounds(240, 140, 210, 20);
+        errorLabel.setForeground(Color.RED);
+        add(errorLabel);
+        // From Here is my navigation events
+        // ADMIN EVENT
+        
+        event e=new event();
+        admin.addActionListener(e);
+        
+        //MEMBER Event
+        mEvent me=new mEvent();
+        member.addActionListener(me);
+        
+        //Combobox  Event
+        
+        cEvent ce=new cEvent();
+        userOptions.addActionListener(ce);
+        
+        //FormWindowActivated event
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
+        
+    }
+    //ADMIN Event
+public class event implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        String alevel;
+alevel= (String) userOptions.getSelectedItem();
+try{
+    if(alevel=="Select"){
+        errorLabel.setVisible(true);
+        admin.setEnabled(false);
+        
+    }
+    else{
+        errorLabel.setVisible(false);
+        admin.setEnabled(true); 
+        
+       javax.swing.SwingUtilities.invokeLater(
+       
+       new Runnable(){
+           @Override
+           public void run(){
+               new AdminLogin();
+           }
+       }
+       );//End of new AdminLogin
+       
+       }//End of else
+     
+}catch(Exception e){
+    e.getMessage();
+}
+    }//End of actionPerformed Method
+    
+}//End of admin Event
+
+//Member Event
+public class mEvent implements ActionListener{
+    public void actionPerformed(ActionEvent am){
+      
+          String mlevel;
+mlevel=(String)userOptions.getSelectedItem();
+try{
+    if(mlevel=="Select"){
+        errorLabel.setVisible(true);
+       member.setEnabled(false);
+        
+    }else{
+         
+       errorLabel.setVisible(false);
+         member.setEnabled(true);
+        
+        javax.swing.SwingUtilities.invokeLater(
+        
+        new Runnable(){
+            @Override
+            public void run(){
+                new MembersRegistration();
+            }
+        }
+        );
+       
+           }
+}catch(Exception e){
+    e.getMessage();
+}
+    }
+    
+}
+// Start of ComboBox event
+public class cEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ce){
+         String s;
+s=(String) userOptions.getSelectedItem();
+
+try{
+    
+   if (s=="Admin"){
+     admin.setVisible(true);
+     admin.setEnabled(true);
+      member.setVisible(false);
+     errorLabel.setVisible(false);
+}else if(s=="Member"){
+      member.setVisible(true);
+        member.setEnabled(true);
+     admin.setVisible(false);
+     errorLabel.setVisible(false);
+}else{
+    errorLabel.setVisible(true);
+     admin.setVisible(true);
+    admin.setEnabled(false);
+     member.setVisible(true);
+         member.setEnabled(false);
+}
+
+}catch(Exception e){
+    JOptionPane.showMessageDialog(null," An Error occured", " ERROR MESSAGE",JOptionPane.ERROR_MESSAGE);
+}
+    }
+}
+
+ private void formWindowActivated(java.awt.event.WindowEvent evt) {                                     
+        this.errorLabel.setVisible(false);
+    }  
+ 
+    public static void main(String[] args) {        
+       javax.swing.SwingUtilities.invokeLater(       
+       new Runnable(){
+           @Override
+           public void run(){
+               
+               new MyUpepeoProject();
+           }
+       }
+      );
+               
+    }
+    
+}
