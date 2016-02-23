@@ -1,0 +1,118 @@
+
+package myupepeoproject;
+import java.awt.Color;
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.*;
+import javax.swing.JOptionPane;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.Connection;
+public class IncomeAllocation extends JFrame {
+   
+   private static JTextField search,id,salaries,clubDevelopment,miscellaneous;
+   private static JLabel searchLabel,idLabel,salariesLabel,clubDevelopmentLabel,miscellaneousLabel;
+   private static JButton save,reset, cancel;
+   private static JPanel header,footer;
+   public IncomeAllocation(){
+       
+        super("VIDEO RETURNED ENTRY SECTION");
+    setLayout(null);
+    setSize(450,250);
+    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    setVisible(true);
+    
+    //start of labels and textfields
+    
+    searchLabel=new JLabel("AMOUNT:");
+    searchLabel.setBounds(40,10,100,30);
+    searchLabel.setForeground(Color.BLUE);
+    add(searchLabel);
+    
+    search=new JTextField();
+    search.setBounds(120,10,200,30);
+    add(search);
+    
+    idLabel=new JLabel("ID:");
+    idLabel.setBounds(80,60,100,20);
+    add(idLabel);
+    
+    id=new JTextField();
+    id.setBounds(120,60,200,20);
+    add(id);
+    
+    salariesLabel=new JLabel("Salaries:");
+    salariesLabel.setBounds(50,100,100,20);
+    add(salariesLabel);
+    
+    salaries=new JTextField();
+    salaries.setBounds(120,100,200,20);
+    add(salaries);
+    
+    clubDevelopmentLabel=new JLabel("ClubDevelopment:");
+    clubDevelopmentLabel.setBounds(0,140,120,20);
+    add(clubDevelopmentLabel);
+    
+     clubDevelopment=new JTextField();
+      clubDevelopment.setBounds(120,140,200,20);
+      add( clubDevelopment);
+      
+      miscellaneousLabel=new JLabel("Miscellaneous:");
+      miscellaneousLabel.setBounds(10,180,100,20);
+      add(miscellaneousLabel);
+      
+       miscellaneous=new JTextField();
+        miscellaneous.setBounds(120,180,200,20);
+        add( miscellaneous);
+        
+        //Buttons
+        
+        save=new JButton("Save");
+        save.setBounds(340,60,90,40);
+        save.setForeground(Color.BLUE);
+        save.setBackground(Color.BLACK);
+        add(save);
+        
+        reset=new JButton("RESET");
+          reset.setBounds(340,110,90,40);
+            reset.setForeground(Color.BLUE);
+              reset.setBackground(Color.BLACK);
+              add(  reset);
+              
+              cancel=new JButton("Cancel");
+               cancel.setBounds(340,160,90,40);
+                cancel.setForeground(Color.BLUE);
+                 cancel.setBackground(Color.BLACK);
+                 add( cancel);
+                 
+                 //header
+                 
+                  header=new JPanel();
+                   header.setBounds(0,0,450,5);
+                    header.setBackground(Color.RED);
+                    add( header);
+                    
+                    footer=new JPanel();
+                    footer.setBounds(0,205,450,5);
+                    footer.setBackground(Color.RED);
+                    add(footer);
+   }
+   
+   public static void main(String [] args){
+       javax.swing.SwingUtilities.invokeLater(
+       
+       new Runnable(){
+           @Override
+           public void run(){
+               IncomeAllocation incomeAllocation = new IncomeAllocation();
+           }
+       }
+       );
+   }
+    
+}
