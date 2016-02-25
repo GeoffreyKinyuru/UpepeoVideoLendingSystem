@@ -12,6 +12,7 @@ import java.awt.event.*;
 import javax.swing.JOptionPane;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -25,19 +26,29 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+//S     T       A       R       T      O      F       C       L       A       S       S
 
 public class Returns extends JFrame{
      //RETURN DETAILS
-       private static JTextField searchVideos,searchMembers,mID,fName, middlename,lName,vcode,vlabel,vcategory,vCategorypayment,borrowingdate,duedate,dateofReturn,overdueDays,fine,lostPayment;
-private static JLabel message,searchvLabel,searchMLabel,mIdLabel,fl,mL, ll ,vcdeLabel,label,categoryLabel ,vcpaymentLabel,borrowingdateLabel,duedateLabel,dateofReturnL,overdueDaysL,fineL,lostPaymentL;
+    Connection Conn=null;
+    ResultSet Results=null;
+    PreparedStatement pstm=null;
+    
+       private static JTextField searchVideos,searchMembers,mID,fName, middlename,lName,vcode,vlabel,vcategory,vcondition,borrowingdate,duedate,dateofReturn,overdueDays,fine,lostPayment;
+private static JLabel message,searchvLabel,searchMLabel,mIdLabel,fl,mL, ll ,vcdeLabel,label,categoryLabel ,vconditionL,borrowingdateLabel,duedateLabel,dateofReturnL,overdueDaysL,fineL,lostPaymentL;
 private static JButton save,reset, cancel;
 private static JPanel navigationPanel; 
 private static JDesktopPane pane;
+//Server
+private static String Servercode,Serverlabel,Servercategory,Servermid,Serverfirstname,Servermiddlename,Serverlastname,Serverborrowingdate,Serverduedate;
  //BOWWERS DETAILS
+Connection sqlConnection=null;
+PreparedStatement pst=null;
+ResultSet queryResults=null;
 private static JTextField searchVideo,searchMember,mIDb,fNameb, middlenameb,lNameb,vcodeb,vlabelb,vcategoryb,vCategorypaymentb,borrowingdateb,duedateb;
 private static JLabel Borrowersmessage,searchvLabelb,searchMLabelb,mIdLabelb,flb,mLb, llb ,vcdeLabelb,labelb,categoryLabelb ,vcpaymentLabelb,borrowingdateLabelb,duedateLabelb;
 private static JButton saveb,resetb, cancelb;
-private static String firstname,lastname,emailV,password,locatiov;
+private static String firstname,middleName,lastname,svcode,slabel,scategory,svPAYMENT;
 private static JDesktopPane borrowersPane;
 
 //VideoCATALOGUE
@@ -157,7 +168,7 @@ vcdeLabel=new JLabel("VideoCode:");
           pane. add( vcode);
     
            label=new JLabel("VideoLabel:");
-           label.setBounds(400,110,90,20);
+           label.setBounds(310,110,90,20);
            pane.add(label);
            
            vlabel=new JTextField();
@@ -173,13 +184,13 @@ vcdeLabel=new JLabel("VideoCode:");
            vcategory.setBounds(400,150,200,20);
            pane.add(vcategory);
            
-           vcpaymentLabel=new JLabel("Condition:");
-           vcpaymentLabel.setBounds(310,190,90,20);
-           pane.add(vcpaymentLabel);
+           vconditionL=new JLabel("Condition:");
+           vconditionL.setBounds(310,190,90,20);
+           pane.add( vconditionL);
            
-           vCategorypayment=new JTextField();
-           vCategorypayment.setBounds(400,190,200,20);
-          pane. add(vCategorypayment);
+            vcondition=new JTextField();
+            vcondition.setBounds(400,190,200,20);
+          pane. add( vcondition);
            
            borrowingdateLabel=new JLabel("Borrowing Date:");
            borrowingdateLabel.setBounds(160,230,100,20);
@@ -288,6 +299,21 @@ ReturnReportSP=new JScrollPane();
 
 reportLayoutPane.addTab("RETURNED_VIDEO_REPORT",ReturnReportSP);
 
+
+//e     v       e      n       t       s
+
+ReturnSaveButtonEvent sbe=new ReturnSaveButtonEvent();
+save.addActionListener(sbe);
+
+ReturnsearchMembersEvent rsme=new ReturnsearchMembersEvent();
+searchMembers.addActionListener(rsme);
+
+ReturnResetButtonEvent rbe=new ReturnResetButtonEvent();
+reset.addActionListener(rbe);
+
+ReturnCancelButtonEvent cbe=new ReturnCancelButtonEvent();
+cancel.addActionListener(cbe);
+
          
          // E       N       D       OF                  R       E       T       U       R       N       S
          
@@ -327,19 +353,21 @@ fNameb=new JTextField();
 fNameb.setBounds(75, 90, 200, 20);
 borrowersPane.add(fNameb);
 
+mLb=new JLabel("MiddleName:");
+mLb.setBounds(1,130, 100, 20);
+borrowersPane.add(mLb);
+middlenameb=new JTextField();
+middlenameb.setBounds(75, 170, 200, 20);
+borrowersPane.add(middlenameb);
+
 llb=new JLabel("LastName:");
-llb.setBounds(1,130, 100, 20);
+llb.setBounds(1,170, 100, 20);
 borrowersPane.add(llb);
 lNameb=new JTextField();
 lNameb.setBounds(75, 130, 200, 20);
 borrowersPane.add(lNameb);
 
-mLb=new JLabel("MiddleName:");
-mLb.setBounds(1,170, 100, 20);
-borrowersPane.add(mLb);
-middlenameb=new JTextField();
-middlenameb.setBounds(75, 170, 200, 20);
-borrowersPane.add(middlenameb);
+
 
 searchvLabelb=new JLabel("Search Video by VideoCode:");
 searchvLabelb.setBounds(300,20,200,20);
@@ -451,6 +479,23 @@ panelBorrowersReport.setBackground(Color.GRAY);
 panelBorrowersReport.add(BorrowersReportSP);
 
 reportLayoutPane.addTab("BORROWERS_REPORT",BorrowersReportSP);
+
+// B    O   R   R   O   W   E   R   S       E   V   E   N   T   S
+
+saveButtonEvent e=new saveButtonEvent();
+saveb.addActionListener(e);
+
+searchMemberEvent sme=new searchMemberEvent();
+searchMember.addActionListener(sme);
+
+searchVideoEvent sve=new searchVideoEvent();
+searchVideo.addActionListener(sve);
+
+resetEvent re=new resetEvent();
+resetb.addActionListener(re);
+
+cancelButtonEvent cbe2=new cancelButtonEvent();
+cancelb.addActionListener(cbe2);
 
 // E    N   D                  OF                        B       O       R       R   O       W       E       R       S
 
@@ -570,12 +615,319 @@ panelCatalogueReport.add(CatalogueSP);
 
 reportLayoutPane.addTab("CATALOGUE_REPORT",CatalogueSP);
 
-//E     n       d       o    f          V       i       d       e       o       C       a       t       a       l       o       g   u   e D     e       t   a       i   l   s
-
-
 
 
 }//END OF CONSTRUCTOR RETURN
+
+//R     E       T      U       R       N           E       V       E       N       T       S
+ 
+public class ReturnCancelButtonEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+       
+       int c=JOptionPane.showConfirmDialog(null, "ARE YOU SURE YOU WANT TO QUIT ?","CONFIRM",JOptionPane.YES_NO_OPTION);
+       if (c==JOptionPane.YES_OPTION){
+           int c2=JOptionPane.showConfirmDialog(null, "DO YOU WISH TO PERFORM OTHER OPERATIONS ?","CONFIRM",JOptionPane.YES_NO_OPTION);
+           if(c2==JOptionPane.YES_OPTION){
+               
+           }else{
+               try{
+Connection sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnection.createStatement();
+String SELECT_QUERY = "SELECT userName FROM adminauthenitication";
+ResultSet queryResults = sqlStatements.executeQuery(SELECT_QUERY);
+
+while(queryResults.next()){
+String adminUsername=queryResults.getString("userName");
+
+ JOptionPane.showMessageDialog(null, " Goodbye "+adminUsername,"CONFIRM",JOptionPane.PLAIN_MESSAGE);
+ 
+System.exit(0);
+
+}//End of while
+}catch(SQLException e){
+JOptionPane.showMessageDialog(null,"SERVER SAYS:"+ e.getMessage());
+}
+              
+           }
+       }
+    }
+}
+
+public class ReturnResetButtonEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        String mymid1=mID.getText();
+          String myfname1=fName.getText();
+           String mymname1=middlename.getText();
+            String mylname1=lName.getText();
+             String code1=vcode.getText();
+              String myvl1=vlabel.getText();
+                String myvcat1=vcategory.getText();
+               String  condition1=vcondition.getText();
+                 String myborowingdate1=borrowingdate.getText();
+                 String  myduedate1=duedate.getText();
+                  String myoverduedays1=overdueDays.getText();
+                   String myreturndate1=dateofReturn.getText();
+                    String myfine1=fine.getText();
+                     String mylostpayments1=lostPayment.getText();
+        if(mymid1.isEmpty()&& myfname1.isEmpty()&& mymname1.isEmpty()&& mylname1.isEmpty()&& code1.isEmpty()&& myvl1.isEmpty()&& myvcat1.isEmpty()&& condition1.isEmpty()&& myborowingdate1.isEmpty()&& myduedate1.isEmpty()&& myreturndate1.isEmpty()&& myoverduedays1.isEmpty()&& myfine1.isEmpty()&& mylostpayments1.isEmpty()){
+            JOptionPane.showMessageDialog(null, "YOU CAN'T RESET AN EMPTY SET !!","ERROR",JOptionPane.ERROR_MESSAGE);
+        }else{
+        vcode.setText(null);
+    vlabel.setText(null);
+    vcategory.setText(null);
+    mID.setText(null);
+    fName.setText(null);
+    middlename.setText(null);
+    lName.setText(null);
+    borrowingdate.setText(null);
+    duedate.setText(null);  
+    dateofReturn.setText(null);
+    overdueDays.setText(null);
+    fine.setText(null);
+    lostPayment.setText(null);
+         }
+    }    
+}// END OF RETURN RESET BUTTON EVENT
+
+public class ReturnsearchMembersEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+          try{
+           Conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = Conn.createStatement();
+
+pstm=Conn.prepareStatement("SELECT * FROM borrowerstable where mID= ? ");
+
+pstm.setString(1,searchMembers.getText());
+
+Results=pstm.executeQuery();
+
+if(Results.next()){
+    
+    //pre-created variables for holding data already in the database.
+    
+    Servercode=Results.getString("vcode");
+    Serverlabel=Results.getString("vlabel");
+    Servercategory=Results.getString("vcategory");
+    Servermid=Results.getString("mID");
+    Serverfirstname=Results.getString("firstname");
+            Servermiddlename=Results.getString("middlename");
+            Serverlastname=Results.getString("lastname");
+                    Serverborrowingdate=Results.getString("date_of_borrowing");
+                    Serverduedate=Results.getString("duedate");
+                    
+                    //Callng the data already in the database and assigning it to the variables above
+    vcode.setText( Servercode);
+    vlabel.setText(Serverlabel);
+    vcategory.setText(Servercategory);
+    mID.setText(Servermid);
+    fName.setText(Serverfirstname);
+    middlename.setText(Servermiddlename);
+    lName.setText(Serverlastname);
+    borrowingdate.setText(Serverborrowingdate);
+    duedate.setText(Serverduedate);             //end of the call
+    
+
+}else{
+    JOptionPane.showMessageDialog(null, "The Member ID didn't match any record in our database \n It is most possible that your account does not exist or \n you have no video in your possesion");
+vcode.setText(null);
+    vlabel.setText(null);
+    vcategory.setText(null);
+    mID.setText(null);
+    fName.setText(null);
+    middlename.setText(null);
+    lName.setText(null);
+    borrowingdate.setText(null);
+    duedate.setText(null);  
+}
+
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "SERVER SAYS: "+e.getMessage(),"SERVER MESSAGE",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+
+public class ReturnSaveButtonEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        String mymid,myfname,mymname,mylname,code,myvl,myvcat,condition,myborowingdate,myduedate,myreturndate,myoverduedays,myfine,mylostpayments;
+        mymid=mID.getText();
+         myfname=fName.getText();
+          mymname=middlename.getText();
+           mylname=lName.getText();
+            code=vcode.getText();
+             myvl=vlabel.getText();
+              myvcat=vcategory.getText();
+               condition=vcondition.getText();
+                myborowingdate=borrowingdate.getText();
+                 myduedate=duedate.getText();
+                 myoverduedays=overdueDays.getText();
+                  myreturndate=dateofReturn.getText();
+                   myfine=fine.getText();
+                    mylostpayments=lostPayment.getText();
+                    
+                    if(mymid.isEmpty()||myfname.isEmpty()||mymname.isEmpty()||mylname.isEmpty()||code.isEmpty()||myvl.isEmpty()||myvcat.isEmpty()||condition.isEmpty()||myborowingdate.isEmpty()||myduedate.isEmpty()||myreturndate.isEmpty()||myoverduedays.isEmpty()||myfine.isEmpty()||mylostpayments.isEmpty()){
+                        JOptionPane.showMessageDialog(null, "ALL FIELDS ARE MADATORY !","ERROR MESSAGE",JOptionPane.ERROR_MESSAGE);
+                    }else{
+                         try{
+            Connection sqlConnections = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnections.createStatement();
+String INSERT_QUERY = "INSERT INTO retuntable VALUES('" + code + "','" + myvl + "','" + myvcat + "','"+mymid+"','"+myfname+"','"+mymname+"','"+mylname+"','"+myborowingdate+"','"+myduedate+"','"+myreturndate+"','"+myoverduedays+"','"+myfine+"','"+mylostpayments+"','"+condition+"');";
+sqlStatements.execute(INSERT_QUERY);
+JOptionPane.showMessageDialog(null,myfname+" : "+"Your records were saved successfully","SUCCESSFUL RECORD ENTRY",JOptionPane.INFORMATION_MESSAGE);
+            
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,"SERVER SAYS: "+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+        }
+                    }
+    }
+}//E        N       D       O       F               R       E       T       U       R       N           E       V       E       N       T       S
+//S     T           A       R       T                         B        O   R       RO  W   ER  S       E   VE  N   T   S  
+
+public class searchVideoEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+       
+        try{
+           sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnection.createStatement();
+
+pst=sqlConnection.prepareStatement("SELECT * FROM invetory where vcode= ? ");
+
+pst.setString(1,searchVideo.getText());
+
+queryResults=pst.executeQuery();
+
+if(queryResults.next()){
+    svcode=queryResults.getString("vcode");
+    slabel=queryResults.getString("vlabel");
+    scategory=queryResults.getString("category");
+    svPAYMENT=queryResults.getString("payments");
+    vcodeb.setText(svcode);
+    vlabelb.setText(slabel);
+    vcategoryb.setText(scategory);
+    vCategorypaymentb.setText(svPAYMENT);
+
+}else{
+    JOptionPane.showMessageDialog(null, "That video is missing");
+}
+
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "SERVER SAYS: "+e.getMessage(),"SERVER MESSAGE",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+
+//searchMemberEvent
+
+public class searchMemberEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+       
+        try{
+           sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnection.createStatement();
+
+pst=sqlConnection.prepareStatement("SELECT * FROM membersregistrationtable where mID= ? ");
+
+pst.setString(1,searchMember.getText());
+
+queryResults=pst.executeQuery();
+
+if(queryResults.next()){
+    String smid=queryResults.getString("mID");
+   String sfirstname=queryResults.getString("firstname");
+     String smiddlename=queryResults.getString("middlename");
+      String slastname=queryResults.getString("lastname");
+    
+    mIDb.setText(smid);
+    fNameb.setText(sfirstname);
+    middlenameb.setText(smiddlename);
+    lNameb.setText(slastname);
+
+}else{
+    JOptionPane.showMessageDialog(null, "That video is missing");
+}
+
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "SERVER SAYS: "+e.getMessage(),"SERVER MESSAGE",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+
+public class saveButtonEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+       String mid,first,middle,last,vcode,vlabel,vcategory,pay,borrowdate,datedue;
+     
+       mid=mIDb.getText();
+        first=fNameb.getText();
+        middle=middlenameb.getText();
+        last=lNameb.getText();
+        vcode=vcodeb.getText();
+        vlabel=vlabelb.getText();
+        vcategory=vcategoryb.getText();
+        pay=vCategorypaymentb.getText();
+        borrowdate=borrowingdateb.getText();
+        datedue=duedateb.getText();
+        
+        if(mid.isEmpty()||first.isEmpty()||middle.isEmpty()||last.isEmpty()||vcode.isEmpty()||vlabel.isEmpty()||vcategory.isEmpty()||pay.isEmpty()||borrowdate.isEmpty()||datedue.isEmpty()){
+            JOptionPane.showMessageDialog(null,"ALL FIELDS ARE MADATORY!!!","ERROR",JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            try{
+            Connection sqlConnections = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnections.createStatement();
+String INSERT_QUERY = "INSERT INTO borrowerstable VALUES('" + vcode + "','" + vlabel + "','" + vcategory + "','"+pay+"','"+mid+"','"+first+"','"+middle+"','"+last+"','"+borrowdate+"','"+datedue+"');";
+sqlStatements.execute(INSERT_QUERY);
+JOptionPane.showMessageDialog(null,first+" : "+"Your records were saved successfully","SUCCESSFUL RECORD ENTRY",JOptionPane.INFORMATION_MESSAGE);
+            
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,"SERVER SAYS: "+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+        }
+         
+    }
+    }
+}
+//R e   s   e   t       Bu  T   O   O   N    E  V   E   N   T   
+
+public class resetEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        searchMember.setText(null);
+        searchVideo.setText(null);
+        mIDb.setText(null);
+        fNameb.setText(null);
+        middlenameb.setText(null);
+        lNameb.setText(null);
+        vcodeb.setText(null);
+        vlabelb.setText(null);
+        vcategoryb.setText(null);
+        vCategorypaymentb.setText(null);
+        borrowingdateb.setText(null);
+        duedateb.setText(null);
+    } 
+}
+
+public class cancelButtonEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        int i=JOptionPane.showConfirmDialog(null, "Are you sure that you want to cancel","CONFIRM",JOptionPane.YES_NO_OPTION);
+        try{
+            if(i==JOptionPane.YES_OPTION){
+                int a=JOptionPane.showConfirmDialog(null, "Do you want to perform any other operation ?","CONFIRM",JOptionPane.YES_NO_OPTION);
+                if(a==JOptionPane.YES_OPTION){
+                    
+                }else{
+                    System.exit(0);
+                }
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, " THE SYSTEM SAYS: "+ e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+        }
+        }
+    }
+            
+
+//C A   T   A   L   O   G   U   E       E   V       E   N   T   S
 
 public class aEvent implements ActionListener{
 public void actionPerformed(ActionEvent ev){
@@ -585,12 +937,23 @@ label=vL.getText();
 dat=date.getText();
 vc=(String) vCat.getSelectedItem();
 va=(String)vAvail.getSelectedItem();
-try{
+    
 if( id.isEmpty()||label.isEmpty()|| dat.isEmpty()||vc.isEmpty()||va.isEmpty()){
 JOptionPane.showMessageDialog(null, "Error! Empty set", "Error Message", JOptionPane.ERROR_MESSAGE);
-}
-}catch(Exception e){
-e.getMessage();
+}else{
+    try{
+    Connection sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnection.createStatement();
+String INSERT_QUERY = "INSERT INTO invetory VALUES('" + id + "','" + label+ "','" + vc + "','"+va+"','"+dat+"');";
+sqlStatements.execute(INSERT_QUERY);
+JOptionPane.showMessageDialog(null,"The video: "+label+" "+"was  added successfully","SUCCESSFUL VIDEO ENTRY",JOptionPane.INFORMATION_MESSAGE);
+
+
+}catch(SQLException e){
+        JOptionPane.showMessageDialog(null,"SERVER SAYS: "+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+        }
+
 }
 }
 }
@@ -599,9 +962,14 @@ public void actionPerformed(ActionEvent ev){
 int c=JOptionPane.showConfirmDialog(null, "Are you sure you want to cancel ?","Confirm Message",JOptionPane.YES_NO_CANCEL_OPTION);
 try{
 if (c==JOptionPane.YES_OPTION){
-System.exit(0);
+int op=JOptionPane.showConfirmDialog(null,"Do you wish to perform other operations ?","OTHER OPERATIONS",JOptionPane.YES_NO_OPTION);
+        if(op==JOptionPane.YES_OPTION){
+ 
+            }else{
+  System.exit(0);
+        }
 }else{
-return;
+
 }
 }catch(Exception e){
 JOptionPane.showMessageDialog(null, e.getMessage());
@@ -617,6 +985,7 @@ vL.setText(null);
 date.setText(null);
 }
 }
+//E     n       d       o    f          V       i       d       e       o       C       a       t       a       l       o       g   u   e D     e       t   a       i   l   s
 public static void main(String [] args){
     javax.swing.SwingUtilities.invokeLater(
     
