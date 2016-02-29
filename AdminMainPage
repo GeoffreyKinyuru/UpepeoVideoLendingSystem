@@ -8,6 +8,9 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+
+
 import java.awt.event.*;
 import javax.swing.JOptionPane;
 import java.sql.DriverManager;
@@ -29,12 +32,20 @@ import javax.swing.JTable;
 //S     T       A       R       T      O      F       C       L       A       S       S
 
 public class Returns extends JFrame{
+    //menu
+     private static JMenuBar menubar;
+              private static JMenu file;
+              private static JMenuItem borrowers,returns,income,catalogue,members,exit;
+    
+    //end of menu
+    
+    
      //RETURN DETAILS
     Connection Conn=null;
     ResultSet Results=null;
     PreparedStatement pstm=null;
-    
-       private static JTextField searchVideos,searchMembers,mID,fName, middlename,lName,vcode,vlabel,vcategory,vcondition,borrowingdate,duedate,dateofReturn,overdueDays,fine,lostPayment;
+     private com.toedter.calendar.JDateChooser ReturnborrowersjDateChooser,ReturnduedatejDateChooser,ReturndateofreturnjDateChooser;
+       private static JTextField searchVideos,searchMembers,mID,fName, middlename,lName,vcode,vlabel,vcategory,vcondition,overdueDays,fine,lostPayment;
 private static JLabel message,searchvLabel,searchMLabel,mIdLabel,fl,mL, ll ,vcdeLabel,label,categoryLabel ,vconditionL,borrowingdateLabel,duedateLabel,dateofReturnL,overdueDaysL,fineL,lostPaymentL;
 private static JButton save,reset, cancel;
 private static JPanel navigationPanel; 
@@ -44,23 +55,25 @@ private static String Servercode,Serverlabel,Servercategory,Servermid,Serverfirs
  //BOWWERS DETAILS
 Connection sqlConnection=null;
 PreparedStatement pst=null;
+PreparedStatement pst2=null;
 ResultSet queryResults=null;
-private static JTextField searchVideo,searchMember,mIDb,fNameb, middlenameb,lNameb,vcodeb,vlabelb,vcategoryb,vCategorypaymentb,borrowingdateb,duedateb;
+ private com.toedter.calendar.JDateChooser BorrowersjDateChooser;
+  private com.toedter.calendar.JDateChooser BorrowersDueDatejDateChooser;
+private static JTextField searchVideo,searchMember,mIDb,fNameb, middlenameb,lNameb,vcodeb,vlabelb,vcategoryb,vCategorypaymentb;
 private static JLabel Borrowersmessage,searchvLabelb,searchMLabelb,mIdLabelb,flb,mLb, llb ,vcdeLabelb,labelb,categoryLabelb ,vcpaymentLabelb,borrowingdateLabelb,duedateLabelb;
 private static JButton saveb,resetb, cancelb;
 private static String firstname,middleName,lastname,svcode,slabel,scategory,svPAYMENT;
 private static JDesktopPane borrowersPane;
 
 //VideoCATALOGUE
-
+ private com.toedter.calendar.JDateChooser CataloguejDateChooser;
 private static JMenuBar mainMenu;
-private static JMenu file,help;
-private static JMenuItem open,exit;
+
 private static JTextField vid, vL,date;
 private static JComboBox vCat,vAvail;
 private static JButton addV,newV,cancelE;
 private JLabel l1,vidl,vcl,vl,va,ed;
-private static Date entryDate;
+ 
 private static JDesktopPane cataloguePane;
 
 //PANELS
@@ -74,18 +87,47 @@ private static JPanel panelBorrowersReport,panelReturnReport,panelCatalogueRepor
 private static JScrollPane BorrowersReportSP,ReturnReportSP,CatalogueSP;
 
 public Returns(){
-      super("VIDEO RETURNED ENTRY SECTION");
+      super("UPEPEO CLUB VIDEO LENDING SECTION-ADMINISTRATOR'S PAGE");
     setLayout(null);
     setSize(1300,750);
-    setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     setVisible(true);
     
-    //topPanel
-   topPanel=new JPanel();
-   topPanel.setBackground(Color.RED);
-   topPanel.setBounds(0,0,1280,15);
-   add(topPanel);
+ 
    
+   menubar=new  JMenuBar();
+   menubar.setBackground(Color.BLUE);
+   menubar.setBounds(0,0,600,15);
+   setJMenuBar(menubar);
+   
+   file=new JMenu("FILE");
+   file.setForeground(Color.WHITE);
+   menubar.add(file);
+   
+   borrowers=new JMenuItem("1: Video Borrowing Section");
+    borrowers.setForeground(Color.RED);
+    file.add( borrowers);
+    
+    returns=new JMenuItem("2: Video Returned Section");
+    returns.setForeground(Color.RED);
+    file.add(returns);
+    
+    catalogue=new JMenuItem("3: Catlogue");
+    catalogue.setForeground(Color.RED);
+    file.add(catalogue);
+    
+    members=new JMenuItem("4: Members Report");
+     members.setForeground(Color.RED);
+      file.add( members);
+      
+      income=new JMenuItem("5: IncomeAllocation section");
+      income.setForeground(Color.RED);
+      file.add(income);
+      
+      exit=new JMenuItem("6: EXIT");
+      exit.setForeground(Color.BLACK);
+      file.add(exit);
+      //End of My Menu Bar
    //CenterPanel   
    CenterPanel=new JPanel();
    CenterPanel.setBounds(600,15,50,530);
@@ -113,12 +155,13 @@ public Returns(){
     add(pane);//End of pane
     
     searchMLabel=new JLabel("Search Member by MemberID:");
-    searchMLabel.setBounds(10,35,175,20);
+    searchMLabel.setBounds(50,35,175,20);
     searchMLabel.setForeground(Color.BLUE);
     pane.add(searchMLabel);
     
     searchMembers=new JTextField();
-    searchMembers.setBounds(186,35,100,20);
+    searchMembers.setBounds(250,35,200,20);
+    searchMembers.setBackground(Color.PINK);
     pane.add(searchMembers);
     
     mIdLabel=new JLabel("MemberID:");
@@ -150,14 +193,7 @@ middlename=new JTextField();
 middlename.setBounds(85, 190, 200, 20);
 pane.add(middlename);
 
-searchvLabel=new JLabel("Search Video by VideoCode:");
-searchvLabel.setBounds(310,35,200,20);
-searchvLabel.setForeground(Color.BLUE);
-pane.add(searchvLabel);
 
-searchVideos=new JTextField();
-searchVideos.setBounds(480,35,120,20);
-pane.add(searchVideos);
 
 vcdeLabel=new JLabel("VideoCode:");
   vcdeLabel.setBounds(310,70,90,20);
@@ -196,25 +232,28 @@ vcdeLabel=new JLabel("VideoCode:");
            borrowingdateLabel.setBounds(160,230,100,20);
            pane.add(borrowingdateLabel);
            
-           borrowingdate=new JTextField();
-          borrowingdate.setBounds(270,230,200,20);
-          pane. add(borrowingdate);
+           ReturnborrowersjDateChooser=new com.toedter.calendar.JDateChooser();
+          ReturnborrowersjDateChooser.setBounds(270,230,200,20);
+          ReturnborrowersjDateChooser.setDateFormatString("yyy/MM/dd");
+          pane. add(ReturnborrowersjDateChooser);
            
            duedateLabel=new JLabel("DueDate:");
             duedateLabel.setBounds(190,270,90,20);
            pane. add( duedateLabel);
             
-             duedate=new JTextField();
-               duedate.setBounds(270,270,200,20);
-              pane. add(  duedate);
+             ReturnduedatejDateChooser=new com.toedter.calendar.JDateChooser();
+               ReturnduedatejDateChooser.setBounds(270,270,200,20);
+                 ReturnduedatejDateChooser.setDateFormatString("yyy/MM/dd");
+              pane. add(  ReturnduedatejDateChooser);
                
                dateofReturnL=new JLabel("Return Date:");
                dateofReturnL.setBounds(170,310,100,20);
                pane.add(dateofReturnL);
                
-               dateofReturn=new JTextField();
-               dateofReturn.setBounds(270,310,200,20);
-               pane.add(dateofReturn);
+               ReturndateofreturnjDateChooser=new com.toedter.calendar.JDateChooser();
+              ReturndateofreturnjDateChooser.setBounds(270,310,200,20);
+              ReturndateofreturnjDateChooser.setDateFormatString("yyy/MM/dd");
+               pane.add( ReturndateofreturnjDateChooser);
                
                overdueDaysL=new JLabel("OverDueDays:");
                overdueDaysL.setBounds(170,350,100,20);
@@ -415,17 +454,19 @@ vcdeLabelb=new JLabel("VideoCode:");
            borrowingdateLabelb.setBounds(190,210,100,20);
            borrowersPane.add(borrowingdateLabelb);
            
-           borrowingdateb=new JTextField();
-          borrowingdateb.setBounds(300,210,200,20);
-          borrowersPane. add(borrowingdateb);
+           BorrowersjDateChooser=new com.toedter.calendar.JDateChooser();
+         BorrowersjDateChooser.setBounds(300,210,200,20);
+           BorrowersjDateChooser.setDateFormatString("yyy/MM/dd");
+          borrowersPane. add(BorrowersjDateChooser);
            
            duedateLabelb=new JLabel("DueDate:");
             duedateLabelb.setBounds(220,250,90,20);
            borrowersPane. add( duedateLabelb);
             
-             duedateb=new JTextField();
-               duedateb.setBounds(300,250,200,20);
-              borrowersPane. add(  duedateb);
+             BorrowersDueDatejDateChooser=new com.toedter.calendar.JDateChooser();
+               BorrowersDueDatejDateChooser.setBounds(300,250,200,20);
+               BorrowersDueDatejDateChooser.setDateFormatString("yyy/MM/dd");
+              borrowersPane. add(  BorrowersDueDatejDateChooser);
            
            //buttons
            
@@ -497,6 +538,7 @@ resetb.addActionListener(re);
 cancelButtonEvent cbe2=new cancelButtonEvent();
 cancelb.addActionListener(cbe2);
 
+
 // E    N   D                  OF                        B       O       R       R   O       W       E       R       S
 
            
@@ -551,9 +593,9 @@ ed=new JLabel("Entry Date:");
 ed.setBounds(400, 50, 80, 20);
 cataloguePane.add(ed);//end of Entry Date
 //Date TextField
-date=new JTextField();
-date.setBounds(490, 50, 100, 20);
-cataloguePane.add(date);//End of date TextField
+CataloguejDateChooser=new com.toedter.calendar.JDateChooser();
+CataloguejDateChooser.setBounds(490, 50, 100, 20);
+cataloguePane.add(CataloguejDateChooser);//End of date TextField
 //Addition of Buttons.
 //Add Button
 addV=new JButton("ADD");
@@ -615,9 +657,120 @@ panelCatalogueReport.add(CatalogueSP);
 
 reportLayoutPane.addTab("CATALOGUE_REPORT",CatalogueSP);
 
+//MENU EVENTS
 
+menuitemborrowersEvent mibe=new menuitemborrowersEvent();
+borrowers.addActionListener(mibe);
+
+menuitemreturnssEvent mire=new menuitemreturnssEvent();
+returns.addActionListener(mire);
+
+menuitemCataloguesEvent mice=new menuitemCataloguesEvent();
+catalogue.addActionListener(mice);
+
+menuitemIncomeEvent mime=new menuitemIncomeEvent();
+income.addActionListener(mime);
+
+menuiteExitsEvent miee=new menuiteExitsEvent();
+exit.addActionListener(miee);
+
+//W         i           n           d           o           w                       c           l           o           s           i           n           g                   e           v           e           n           t
+
+
+ addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
 }//END OF CONSTRUCTOR RETURN
+ private void formWindowClosing(java.awt.event.WindowEvent evt) {                                   
+     int form=JOptionPane.showConfirmDialog(null, "Are you sure that you really want to exit ?","CONFIRM WINDOW CLOSURE",JOptionPane.YES_NO_OPTION);
+     if(form==JOptionPane.YES_OPTION){
+          try{
+Connection sqlConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
+//create a connection to the database
+Statement sqlStatements = sqlConnection.createStatement();
+String SELECT_QUERY = "SELECT userName FROM adminauthenitication";
+ResultSet queryResults = sqlStatements.executeQuery(SELECT_QUERY);
+
+while(queryResults.next()){
+String adminUsername=queryResults.getString("userName");
+
+ JOptionPane.showMessageDialog(null, " Goodbye... "+adminUsername,"CONFIRM",JOptionPane.PLAIN_MESSAGE);
+ 
+System.exit(0);
+
+}//End of while
+}catch(SQLException e){
+JOptionPane.showMessageDialog(null,"SERVER SAYS:"+ e.getMessage());
+}
+     }else{
+         JOptionPane.showMessageDialog(null, "Thanks for Staying","CONFIRMED",JOptionPane.PLAIN_MESSAGE);
+     }
+    }   
+
+//M         E           N           U       S                   E           V           E       N       T
+public class menuitemCataloguesEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        javax.swing.SwingUtilities.invokeLater(
+        
+        new Runnable (){
+        @ Override
+        public void run(){
+            new VideoCatalogue();
+        }
+    }
+        );
+        
+    }
+}
+
+public class menuitemreturnssEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        
+    }
+}
+
+public class menuitemIncomeEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+          javax.swing.SwingUtilities.invokeLater(
+        
+        new Runnable (){
+        @ Override
+        public void run(){
+            new IncomeAllocation();
+        }
+    }
+        );
+    }
+}
+
+public class menuiteExitsEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        int q=JOptionPane.showConfirmDialog(null, "Sure to Exit ?","Confirm",JOptionPane.YES_NO_OPTION);
+        if(q==JOptionPane.YES_OPTION){
+            System.exit(0);
+        }else{
+            
+        }
+    }
+}
+
+public class menuitemborrowersEvent implements ActionListener{
+    public void actionPerformed(ActionEvent ev){
+        javax.swing.SwingUtilities.invokeLater(
+        
+        new Runnable (){
+        @ Override
+        public void run(){
+            new Borrowers();
+        }
+    }
+        );
+    }
+}
+
 
 //R     E       T      U       R       N           E       V       E       N       T       S
  
@@ -640,7 +793,7 @@ ResultSet queryResults = sqlStatements.executeQuery(SELECT_QUERY);
 while(queryResults.next()){
 String adminUsername=queryResults.getString("userName");
 
- JOptionPane.showMessageDialog(null, " Goodbye "+adminUsername,"CONFIRM",JOptionPane.PLAIN_MESSAGE);
+ JOptionPane.showMessageDialog(null, " Goodbye... "+adminUsername,"CONFIRM",JOptionPane.PLAIN_MESSAGE);
  
 System.exit(0);
 
@@ -664,10 +817,10 @@ public class ReturnResetButtonEvent implements ActionListener{
               String myvl1=vlabel.getText();
                 String myvcat1=vcategory.getText();
                String  condition1=vcondition.getText();
-                 String myborowingdate1=borrowingdate.getText();
-                 String  myduedate1=duedate.getText();
+                 String myborowingdate1= ((JTextField) ReturnborrowersjDateChooser.getDateEditor().getUiComponent()).getText();
+                 String  myduedate1= ((JTextField) ReturnduedatejDateChooser.getDateEditor().getUiComponent()).getText();
                   String myoverduedays1=overdueDays.getText();
-                   String myreturndate1=dateofReturn.getText();
+                   String myreturndate1= ((JTextField) ReturndateofreturnjDateChooser.getDateEditor().getUiComponent()).getText();
                     String myfine1=fine.getText();
                      String mylostpayments1=lostPayment.getText();
         if(mymid1.isEmpty()&& myfname1.isEmpty()&& mymname1.isEmpty()&& mylname1.isEmpty()&& code1.isEmpty()&& myvl1.isEmpty()&& myvcat1.isEmpty()&& condition1.isEmpty()&& myborowingdate1.isEmpty()&& myduedate1.isEmpty()&& myreturndate1.isEmpty()&& myoverduedays1.isEmpty()&& myfine1.isEmpty()&& mylostpayments1.isEmpty()){
@@ -676,13 +829,15 @@ public class ReturnResetButtonEvent implements ActionListener{
         vcode.setText(null);
     vlabel.setText(null);
     vcategory.setText(null);
+    vcondition.setText(null);
+    searchMembers.setText(null);
     mID.setText(null);
     fName.setText(null);
     middlename.setText(null);
     lName.setText(null);
-    borrowingdate.setText(null);
-    duedate.setText(null);  
-    dateofReturn.setText(null);
+    ReturnborrowersjDateChooser.setDate(null);
+     ReturnduedatejDateChooser.setDate(null);  
+     ReturndateofreturnjDateChooser.setDate(null);
     overdueDays.setText(null);
     fine.setText(null);
     lostPayment.setText(null);
@@ -700,22 +855,21 @@ Statement sqlStatements = Conn.createStatement();
 pstm=Conn.prepareStatement("SELECT * FROM borrowerstable where mID= ? ");
 
 pstm.setString(1,searchMembers.getText());
-
 Results=pstm.executeQuery();
 
 if(Results.next()){
     
     //pre-created variables for holding data already in the database.
-    
+   
     Servercode=Results.getString("vcode");
     Serverlabel=Results.getString("vlabel");
     Servercategory=Results.getString("vcategory");
     Servermid=Results.getString("mID");
     Serverfirstname=Results.getString("firstname");
             Servermiddlename=Results.getString("middlename");
-            Serverlastname=Results.getString("lastname");
-                    Serverborrowingdate=Results.getString("date_of_borrowing");
-                    Serverduedate=Results.getString("duedate");
+            Serverlastname=Results.getString("lastname");                   
+                   
+                   
                     
                     //Callng the data already in the database and assigning it to the variables above
     vcode.setText( Servercode);
@@ -725,8 +879,8 @@ if(Results.next()){
     fName.setText(Serverfirstname);
     middlename.setText(Servermiddlename);
     lName.setText(Serverlastname);
-    borrowingdate.setText(Serverborrowingdate);
-    duedate.setText(Serverduedate);             //end of the call
+      ReturnborrowersjDateChooser.setDate(Results.getDate("date_of_borrowing"));      
+     ReturnduedatejDateChooser.setDate(Results.getDate("duedate"));        //end of the call
     
 
 }else{
@@ -738,8 +892,8 @@ vcode.setText(null);
     fName.setText(null);
     middlename.setText(null);
     lName.setText(null);
-    borrowingdate.setText(null);
-    duedate.setText(null);  
+    BorrowersjDateChooser.setDate(null);
+    BorrowersDueDatejDateChooser.setDate(null);  
 }
 
         }catch(SQLException e){
@@ -759,23 +913,36 @@ public class ReturnSaveButtonEvent implements ActionListener{
              myvl=vlabel.getText();
               myvcat=vcategory.getText();
                condition=vcondition.getText();
-                myborowingdate=borrowingdate.getText();
-                 myduedate=duedate.getText();
+                myborowingdate=((JTextField)ReturnborrowersjDateChooser.getDateEditor().getUiComponent()).getText();
+                 myduedate=((JTextField)ReturnduedatejDateChooser.getDateEditor().getUiComponent()).getText();
                  myoverduedays=overdueDays.getText();
-                  myreturndate=dateofReturn.getText();
+                  myreturndate= ((JTextField)ReturndateofreturnjDateChooser.getDateEditor().getUiComponent()).getText();
                    myfine=fine.getText();
                     mylostpayments=lostPayment.getText();
                     
-                    if(mymid.isEmpty()||myfname.isEmpty()||mymname.isEmpty()||mylname.isEmpty()||code.isEmpty()||myvl.isEmpty()||myvcat.isEmpty()||condition.isEmpty()||myborowingdate.isEmpty()||myduedate.isEmpty()||myreturndate.isEmpty()||myoverduedays.isEmpty()||myfine.isEmpty()||mylostpayments.isEmpty()){
+                    if(mymid.isEmpty()||myfname.isEmpty()||mymname.isEmpty()||mylname.isEmpty()||code.isEmpty()||myvl.isEmpty()||myvcat.isEmpty()||condition.isEmpty()|| myborowingdate.toString().isEmpty()||myduedate.toString().isEmpty()||myreturndate.toString().isEmpty()||myoverduedays.isEmpty()||myfine.isEmpty()||mylostpayments.isEmpty()){
                         JOptionPane.showMessageDialog(null, "ALL FIELDS ARE MADATORY !","ERROR MESSAGE",JOptionPane.ERROR_MESSAGE);
                     }else{
                          try{
             Connection sqlConnections = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
 //create a connection to the database
 Statement sqlStatements = sqlConnections.createStatement();
+String DeleteR_QUERY="DELETE FROM retuntable WHERE vcode='"+vcode.getText()+"'";
 String INSERT_QUERY = "INSERT INTO retuntable VALUES('" + code + "','" + myvl + "','" + myvcat + "','"+mymid+"','"+myfname+"','"+mymname+"','"+mylname+"','"+myborowingdate+"','"+myduedate+"','"+myreturndate+"','"+myoverduedays+"','"+myfine+"','"+mylostpayments+"','"+condition+"');";
+
+String UPDATE_QUERY="UPDATE invetory SET availability='AVAILABLE' WHERE vcode='"+vcode.getText()+"'";
+
+String DeleteB_QUERY="DELETE FROM borrowerstable WHERE mID='"+mID.getText()+"'";
+
+sqlStatements.execute(DeleteR_QUERY);
+
 sqlStatements.execute(INSERT_QUERY);
-JOptionPane.showMessageDialog(null,myfname+" : "+"Your records were saved successfully","SUCCESSFUL RECORD ENTRY",JOptionPane.INFORMATION_MESSAGE);
+
+sqlStatements.execute(UPDATE_QUERY);
+
+sqlStatements.execute(DeleteB_QUERY);
+
+JOptionPane.showMessageDialog(null,myfname+" : "+"Your records were saved successfully and Updates done successfully","SUCCESSFUL RECORD ENTRY",JOptionPane.INFORMATION_MESSAGE);
             
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null,"SERVER SAYS: "+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
@@ -784,6 +951,7 @@ JOptionPane.showMessageDialog(null,myfname+" : "+"Your records were saved succes
     }
 }//E        N       D       O       F               R       E       T       U       R       N           E       V       E       N       T       S
 //S     T           A       R       T                         B        O   R       RO  W   ER  S       E   VE  N   T   S  
+
 
 public class searchVideoEvent implements ActionListener{
     public void actionPerformed(ActionEvent ev){
@@ -795,24 +963,47 @@ Statement sqlStatements = sqlConnection.createStatement();
 
 pst=sqlConnection.prepareStatement("SELECT * FROM invetory where vcode= ? ");
 
+pst2=sqlConnection.prepareStatement("SELECT * FROM invetory where vcode= ? ");
+
+pst2.setString(1,searchVideo.getText() );
+
+queryResults=pst2.executeQuery();
+
+
 pst.setString(1,searchVideo.getText());
+
 
 queryResults=pst.executeQuery();
 
 if(queryResults.next()){
+    
+    String avail=queryResults.getString("availability");
+    
+if(avail.equals("MISSING")){
+     vcodeb.setText(null);
+    vlabelb.setText(null);
+    vcategoryb.setText(null);
+    vCategorypaymentb.setText(null);
+    
+    JOptionPane.showMessageDialog(null,"It is possible that the video you are searching is : \n 1:  currently on loan \n 2:  Does'nt exist","MISSING VIDEO",JOptionPane.ERROR_MESSAGE);
+    
+}else{
+    
     svcode=queryResults.getString("vcode");
     slabel=queryResults.getString("vlabel");
     scategory=queryResults.getString("category");
     svPAYMENT=queryResults.getString("payments");
+    
     vcodeb.setText(svcode);
     vlabelb.setText(slabel);
     vcategoryb.setText(scategory);
     vCategorypaymentb.setText(svPAYMENT);
-
+    
+}
 }else{
     JOptionPane.showMessageDialog(null, "That video is missing");
 }
-
+        
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null, "SERVER SAYS: "+e.getMessage(),"SERVER MESSAGE",JOptionPane.ERROR_MESSAGE);
         }
@@ -868,8 +1059,8 @@ public class saveButtonEvent implements ActionListener{
         vlabel=vlabelb.getText();
         vcategory=vcategoryb.getText();
         pay=vCategorypaymentb.getText();
-        borrowdate=borrowingdateb.getText();
-        datedue=duedateb.getText();
+        borrowdate=((JTextField)BorrowersjDateChooser.getDateEditor().getUiComponent()).getText();
+        datedue=((JTextField)BorrowersDueDatejDateChooser.getDateEditor().getUiComponent()).getText();
         
         if(mid.isEmpty()||first.isEmpty()||middle.isEmpty()||last.isEmpty()||vcode.isEmpty()||vlabel.isEmpty()||vcategory.isEmpty()||pay.isEmpty()||borrowdate.isEmpty()||datedue.isEmpty()){
             JOptionPane.showMessageDialog(null,"ALL FIELDS ARE MADATORY!!!","ERROR",JOptionPane.INFORMATION_MESSAGE);
@@ -878,9 +1069,15 @@ public class saveButtonEvent implements ActionListener{
             Connection sqlConnections = DriverManager.getConnection("jdbc:mysql://localhost:3306/upepeoproject", "root", "");
 //create a connection to the database
 Statement sqlStatements = sqlConnections.createStatement();
+
 String INSERT_QUERY = "INSERT INTO borrowerstable VALUES('" + vcode + "','" + vlabel + "','" + vcategory + "','"+pay+"','"+mid+"','"+first+"','"+middle+"','"+last+"','"+borrowdate+"','"+datedue+"');";
+String UPDATE_QUERY="UPDATE invetory SET availability='MISSING' WHERE vcode='"+vcodeb.getText()+"'";
+
 sqlStatements.execute(INSERT_QUERY);
-JOptionPane.showMessageDialog(null,first+" : "+"Your records were saved successfully","SUCCESSFUL RECORD ENTRY",JOptionPane.INFORMATION_MESSAGE);
+
+sqlStatements.execute(UPDATE_QUERY);
+
+JOptionPane.showMessageDialog(null,first+" : "+"records were saved successfully and The Catalogue Updated Accordingly","SUCCESSFUL RECORD ENTRY",JOptionPane.INFORMATION_MESSAGE);
             
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null,"SERVER SAYS: "+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
@@ -903,8 +1100,8 @@ public class resetEvent implements ActionListener{
         vlabelb.setText(null);
         vcategoryb.setText(null);
         vCategorypaymentb.setText(null);
-        borrowingdateb.setText(null);
-        duedateb.setText(null);
+        BorrowersjDateChooser.setDate(null);
+        BorrowersDueDatejDateChooser.setDate(null);
     } 
 }
 
@@ -934,7 +1131,7 @@ public void actionPerformed(ActionEvent ev){
 String id, label, dat,vc,va,ve;
 id=vid.getText();
 label=vL.getText();
-dat=date.getText();
+dat=((JTextField)CataloguejDateChooser.getDateEditor().getUiComponent()).getText();
 vc=(String) vCat.getSelectedItem();
 va=(String)vAvail.getSelectedItem();
     
@@ -982,7 +1179,7 @@ vid.setText(null);
 vAvail.setSelectedIndex(0);
 vCat.setSelectedIndex(0);
 vL.setText(null);
-date.setText(null);
+CataloguejDateChooser.setDate(null);
 }
 }
 //E     n       d       o    f          V       i       d       e       o       C       a       t       a       l       o       g   u   e D     e       t   a       i   l   s
